@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            background-color: rgb(24,24,24);
+        }
+     #container,#trend{
+         display: grid;
+         grid-template-columns: repeat(4,1fr);
+         gap:20px;
+         color: white;
+         margin-top: 30px;
+
+     }
+     input{
+         margin-left: 450px;
+         height: 40px;
+         margin-bottom: 20px;
+         width: 550px;
+         background-color: rgb(24,24,24);
+         color: white;
+         margin-top: 20px;
+         border:none;
+     }
+     button{
+        height: 45px;
+        background-color: rgb(49,49,49);
+        border:none;
+        
+     }
+     #nav{
+         
+         background-color: rgb(32,32,32)
+     }
+    </style>
+</head>
+<body>
+    <div id="nav">
+        <input type="text" id="searchmovie"><button onclick="getvideos()">Search</button>
+    </div>
+    <div id="trend">
+
+    </div>
+    <div id="container">
+      
+    </div>
+
+</body>
+</html>
+<script>
+
+    let key = `AIzaSyDnC2x9_ElI8qySpqQpX7TUcr7_ftRJdGo` 
+    //new = `AIzaSyD89g41wyk7pP-qcB_vxU9kLeNAb3D8WZ8`
+    
+    let getvideos = async() =>{
+        let  input = document.querySelector("#searchmovie").value
+        try{
+          var res = await fetch( ` https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&type=video&q=${input}&key=${key}`)
+          var data = await res.json()
+       
+          data = data.items
+          console.log(data)
+          displaydata(data)
+        }
+        catch(err){
+            console.log(err)
+        }
+       
+    }
+  
+    let displaydata = (data)=>{
+        document.getElementById("container").innerHTML=""
+        document.querySelector("#trend").innerHTML=""
+        data.forEach((ele)=>{
+            
+        const {id: {videoId}} = ele;
+        const {snippet:{channelTitle}} = ele
+        const{snippet:{title}} = ele
+
+
+         var div = document.createElement("div")
+
+         var iframe = document.createElement("iframe")
+         iframe.setAttribute("allowFullScreen",true)
+         
+         iframe.src= `https://www.youtube.com/embed/${videoId}`
+
+         var p = document.createElement("p")
+         p.textContent= channelTitle
+
+         var p1 = document.createElement("p")
+         p1.textContent= title
+
+         div.append(iframe,p1,p)
+
+         document.getElementById("container").append(div)
+        })  
+    }
+
+// //     snippet:
+// // channelId: "UChMU-aFKCoQyPOQzYph35YA"
+// // channelTitle: "The Engineer Guy 2.0"
+// // description: "Masai School Complete Information | Must Watch Before Joining Masai School} ****** Get a flat 10% Discount on all ..."
+// // liveBroadcastContent: "none"
+// // publishTime: "2021-08-24T04:06:31Z"
+// // publishedAt: "2021-08-24T04:06:31Z"
+// // thumbnails: {default: {…}, medium: {…}, high: {…}}
+// // title: "Masai School Complete Information | Must Watch Before Joining Masai School"
+// // [[Prototype]]: Object
+
+
+
+ const trend = async()=>{
+    try{
+     var res = await fetch( ` https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=20&type=video&key=${key}`)
+     var all_data = await res.json()
+     all_data = all_data.items
+     console.log(all_data) 
+     displaytrend(all_data)
+    }
+    catch (err){
+        console.log(err)
+    }
+ }
+ trend()
+
+ 
+const displaytrend = (all_data)=>{
+    all_data.forEach((ele)=>{
+        var div = document.createElement("div")
+
+        const {id:{videoId}}=ele;
+        const {snippet:{channelTitle}} = ele
+        const{snippet:{title}} = ele
+
+        var iframe = document.createElement("iframe")
+        iframe.setAttribute("allowFullScreen",true)
+        iframe.src=`https://www.youtube.com/embed/${videoId}`
+        
+        var p = document.createElement("p")
+         p.textContent= channelTitle
+
+         var p1 = document.createElement("p")
+         p1.textContent= title
+       
+       div.append(iframe,p1,p)
+
+       document.querySelector("#trend").append(div)
+
+    })      
+}
+
+
+
+
+
+</script>
